@@ -1,0 +1,68 @@
+Sub Tranfer_data()
+'
+' Tranfer_data Macro
+'
+
+'
+'--------------------------------------------------------
+Dim tar_sheet As Worksheet
+Set tar_sheet = Worksheets("Target")
+
+Dim sour_sheet As Worksheet
+Set sour_sheet = Worksheets("Source")
+'------------------------------------------------------------
+
+Dim sour_range As Integer
+sour_range = sour_sheet.UsedRange.Rows.Count
+
+For i = 2 To sour_range
+
+'-------------------------------------------------------------------
+    Dim sour_id As String
+    sour_id = Trim(UCase(sour_sheet.Range("B" & i).Value))
+    
+    Dim sour_file_path As String
+    sour_file_path = sour_sheet.Range("A" & i).Value
+    
+    Dim sour_file_type As String
+    sour_file_type = sour_sheet.Range("C" & i).Value
+'------------------------------------------------------------------
+
+    Dim tar_range As Integer
+    tar_range = tar_sheet.UsedRange.Rows.Count
+
+
+    For j = 2 To tar_range
+
+        Dim tar_id As String
+        tar_id = Trim(UCase(tar_sheet.Range("C" & j).Value))
+        
+        If sour_id = tar_id Then
+        '-----------------------------------------------------------------------------------
+            If IsEmpty(tar_sheet.Range("E" & j).Value) = True Then
+                tar_sheet.Range("E" & j).Value = sour_file_path
+                tar_sheet.Range("F" & j).Value = sour_file_type
+                
+            Else
+                tar_sheet.Rows(j).EntireRow.Insert
+                tar_sheet.Rows(j + 1).EntireRow.Copy tar_sheet.Rows(j)
+                '-------------------------------------
+                tar_sheet.Range("E" & j).Value = sour_file_path
+                tar_sheet.Range("F" & j).Value = sour_file_type
+                '-------------------------------------
+            End If
+            
+            '------mark the inputted file in sour---------------
+            sour_sheet.Range("D" & i).Value = 1
+            '----------------------------------------------------
+            
+            Exit For
+        
+            
+        End If
+        
+        Next j
+              
+              
+        Next i
+End Sub
